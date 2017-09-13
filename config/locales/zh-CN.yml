@@ -1,0 +1,6 @@
+"zh-CN":
+  event:
+    status:
+      preparing: 准备中
+      processing: 召集中
+      over: 已结束

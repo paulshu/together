@@ -1,0 +1,116 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12" style="margin-top: 10px;">
+      <div class="col-md-4">
+        <% if @event.logo.present? %>
+          <%= link_to image_tag(@event.logo.url,size: "300x300", :target => "_blank")%>
+        <% else %>
+           <%= link_to image_tag("http://placehold.it/300x300&text=No Pic", :target => "_blank")%>
+        <% end %>
+      </div>
+
+      <div class="col-md-8">
+        <div class="row">
+          <h3><%= @event.title %></h3>
+          <br>
+          <div class="event-details">
+            <p><strong>开始时间：</strong><%= @event.start_time %></p>
+          </div>
+          <div class="event-details">
+            <p><strong>结束时间：</strong><%= @event.end_time %></p>
+          </div>
+          <div class="event-details">
+            <p><strong>地点：</strong><%= @event.address %></p>
+          </div>
+          <div class="event-details">
+            <p><strong>主办：</strong><%= @event.sponsor %></p>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-2">
+              <% if !current_user %>
+                <%= link_to "添加收藏",favorite_event_path(@event,type: "favorite"), method: :put, class: "btn btn-default"%>
+              <% else %>
+                <% if current_user.is_favorite_of?(@event) %>
+                  <%= link_to "取消收藏",favorite_event_path(@event,type: "unfavorite"), method: :put, class: "btn btn-default"%>
+                <% else %>
+                  <%= link_to "添加收藏",favorite_event_path(@event,type: "favorite"), method: :put, class: "btn btn-default"%>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="col-md-2">
+              <%= link_to("申请赴约", "#", class: "btn btn-success")%>
+            </div>
+            <div class="col-md-8">
+              <p>分享至: <%= social_share_button_tag(@event.title, :allow_sites => %w(twitter facebook google_plus weibo qq douban wechat))%></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="event_info">
+      <div class="TabBarBox">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#tab-left">活动详情</a></li>
+          <li><a data-toggle="tab" href="#tab-right">讨论区</a></li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <!-- 活动详情页面 -->
+        <div class="tab-pane fade active" id="tab-left">
+          <div class="event_details_description">
+            <p style="line-height:3em; "><%= raw @event.description %></p>
+          </div>
+        </div>
+        <!-- 活动讨论区 -->
+        <div class="tab-pane fade" id="tab-right">
+          <div class="event_reviews">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <%= render "reviews/form"%>
+                <hr>
+                <% if @reviews.blank? %>
+                  <p>该活动还没有人讨论，来侃几句吧？</p>
+                <% else %>
+                  <% @reviews.each do |review| %>
+                  <div class="reviews" style="text-align: left;">
+                    <ul>
+                      <div class="user_avatar" style="float: left;">
+                        <% if current_user.avatar.present? %>
+                          <%= image_tag(current_user.avatar.url, class: "review_avatar")%>
+                        <% else %>
+                          <%= image_tag("https://ws4.sinaimg.cn/large/006tNc79gy1fj8fv5d1tdj30zk0npdig.jpg", class: "review_avatar")%>
+                        <% end %>
+                      </div>
+                    </ul>
+                      <div class="row">
+                        <!-- <% if current_user == review.user %>
+                         <%= link_to("删除", event_review_path(@event), method: :delete, data: {confirm: "Are you sure?"}, class: "pull-right")%>
+                        <% end %> -->
+                        <div class="col-md-9 review-user-info">
+                          <%= review.user.display_name %>
+                        </div>
+                        <div class="col-md-3">
+                          <%= review.created_at%>
+                        </div>
+                      </div>
+                      <div class="review-comment">
+                        <%= review.content %>
+                      </div>
+                  </div>
+                  <% end %>
+                <% end %>
+                <hr>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
